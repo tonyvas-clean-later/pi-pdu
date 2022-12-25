@@ -7,7 +7,6 @@ class ExpressServer{
         this.server = http.createServer(this.app);
 
         this.app.use(express.static(publicPath))
-
         this.server.listen(port);
     }
 }
