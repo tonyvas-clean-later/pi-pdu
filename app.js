@@ -16,12 +16,14 @@ let handle = setInterval(() => {
     if (!isRunning){
         isRunning = true;
         run().then(() => {
-            isRunning = false;
+            
         }).catch(err => {
             console.error(err);
-        });
+        }).finally(() => {
+            isRunning = false;
+        })
     }
-}, 100);
+}, 1);
 
 function run(){
     return new Promise((resolve, reject) => {

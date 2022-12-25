@@ -1,10 +1,11 @@
 class Graph{
-    constructor(title, parentElement, width, height, color){
+    constructor(title, parentElement, width, height, color, autoresize = false){
         this.title = title;
         this.parentElement = parentElement;
         this.width = width;
         this.height = height;
         this.color = color;
+        this.autoresize = autoresize;
 
         this.setup();
     }
@@ -60,9 +61,20 @@ class Graph{
         this.context.strokeStyle = this.color;
         this.context.beginPath();
 
+        let min = 0;
+        let max = this.height;
+
+        if (this.autoresize){
+            let minmax = this.getMinMax();
+            min = minmax.min;
+            max = minmax.max;
+
+            this.h2.innerHTML = `${this.title} (${min}-${max})`
+        }
+
         for (let i = 0; i < this.values.length; i++){
-            let x = this.map(i + 1, 0, this.values.length, 10, this.canvas.width - 10);
-            let y = this.map(this.values[i], 0, 4096, 10, this.canvas.height - 10);
+            let x = this.map(i + 1, 0, this.values.length, 0, this.canvas.width);
+            let y = this.map(this.values[i], min, max, this.canvas.height, 0);
 
             if (i == 0){
                 this.context.moveTo(x, y);
@@ -75,8 +87,28 @@ class Graph{
         this.context.stroke();
     }
 
-    append(item){
-        this.values.push(item);
+    getMinMax(){
+        let min = null;
+        let max = null;
+
+        for (let value of this.values){
+            if (min === null){
+                min = value;
+                max = value;
+            }
+
+            min = Math.min(min, value);
+            max = Math.max(max, value);
+        }
+
+        min = Math.floor(min * 0.95)
+        max = Math.floor(max * 1.05)
+
+        return {min, max};
+    }
+
+    append(value){
+        this.values.push(value);
         if (this.values.length > this.width){
             this.values.splice(0, 1);
         }
