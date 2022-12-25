@@ -18,15 +18,16 @@ let handle = setInterval(() => {
         run().then(() => {
             isRunning = false;
         }).catch(err => {
-            console.error();
+            console.error(err);
         });
     }
-}, 0);
+}, 100);
 
 function run(){
     return new Promise((resolve, reject) => {
-        adc.read().then(values => {
-            console.log(values);
+        adc.read().then(data => {
+            console.log(data);
+            ioServer.io.emit('data', data);
             resolve();
         }).catch(reject);
     })
